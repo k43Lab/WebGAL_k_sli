@@ -105,6 +105,13 @@ const jp = {
             textboxOpacity: {
               title: 'テキストボックスの不透明度',
             },
+            highlightReadText: {
+              title: '既読テキストのハイライト',
+              options: {
+                on: 'オン',
+                off: 'オフ',
+              },
+            },
             textPreview: {
               title: 'テキスト表示プレビュー',
               text: 'これはテキストボックスのフォントとサイズ、表示速度のプレビューです。上にある設定で変更できます。',
@@ -122,6 +129,47 @@ const jp = {
             voiceOption: { title: 'ボイスの中断' },
             voiceStop: { title: '中断する' },
             voiceContinue: { title: '中断しない' },
+          },
+        },
+        controls: {
+          title: '操作',
+          options: {
+            panic: {
+              title: 'パニックオーバーレイ',
+              primaryKey: '主キー',
+              altKey: '代替キー',
+            },
+            back: {
+              title: '戻る',
+              primaryKey: '主キー',
+              altKey: '代替キー',
+            },
+            skip: {
+              title: 'スキップ',
+              primaryKey: '主キー',
+              altKey: '代替キー',
+            },
+            nextSentence: {
+              title: '次のセリフ',
+              primaryKey: '主キー',
+              altKey: '代替キー',
+            },
+            toggleFullScreen: {
+              title: 'フルスクリーン切替',
+              primaryKey: '主キー',
+              altKey: '代替キー',
+            },
+            resetKeys: 'デフォルトに戻す',
+            keyLabels: {
+              Escape: 'Esc',
+              Backquote: '`',
+              Control: 'Ctrl',
+              Space: 'Space',
+              Enter: 'Enter',
+              F11: 'F11',
+              none: 'なし',
+            },
+            tips: 'キーボックスをクリックして希望のキーを押してください。Escでキャンセル',
           },
         },
         // language: {

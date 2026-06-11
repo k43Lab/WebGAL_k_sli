@@ -29,6 +29,26 @@ export enum fullScreenOption {
 }
 
 /**
+ * 快捷键绑定配置接口
+ * 每个功能可绑定一个主键和一个备选键
+ */
+export interface IKeyBinding {
+  primaryKey: string; // 主键
+  altKey: string; // 备选键
+}
+
+/**
+ * 所有快捷键绑定配置
+ */
+export interface IKeyBindings {
+  panic: IKeyBinding; // 恐慌按钮 (打开/关闭紧急覆盖层)
+  back: IKeyBinding; // 返回 (关闭当前UI面板)
+  skip: IKeyBinding; // 快进 (按住快进)
+  nextSentence: IKeyBinding; // 下一句 (推进对话)
+  toggleFullScreen: IKeyBinding; // 全屏切换
+}
+
+/**
  * @interface IOptionData 用户设置数据接口
  */
 export interface IOptionData {
@@ -47,6 +67,8 @@ export interface IOptionData {
   voiceInterruption: voiceOption; // 是否中断语音
   fullScreen: fullScreenOption;
   skipAll: boolean; // 快进已读/快进全文
+  highlightReadText: boolean; // 是否高亮已阅读文本
+  keyBindings: IKeyBindings; // 快捷键绑定配置
 }
 
 /**

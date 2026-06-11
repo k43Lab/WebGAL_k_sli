@@ -1,7 +1,7 @@
 import styles from '@/UI/Menu/Options/options.module.scss';
 import { NormalOption } from '@/UI/Menu/Options/NormalOption';
 import { NormalButton } from '@/UI/Menu/Options/NormalButton';
-import { resetAllData, resetOptionSet, setOptionData } from '@/store/userDataReducer';
+import { resetAllData, resetOptionSet, setOptionData, clearReadHistory } from '@/store/userDataReducer';
 import { IUserData, playSpeed } from '@/store/userDataInterface';
 import { backupSaves, getStorage, setStorage, dumpToStorageFast } from '@/Core/controller/storage/storageController';
 import { useDispatch, useSelector } from 'react-redux';
@@ -153,8 +153,11 @@ export function System() {
                     leftFunc: () => {
                       backupSaves();
                       dispatch(saveActions.resetSaves());
+                      dispatch(clearReadHistory());
+                      WebGAL.readHistoryManager.clearReadHistory();
                       dumpSavesToStorage(0, 200);
                       dumpFastSaveToStorage();
+                      dumpToStorageFast();
                     },
                     rightFunc: () => {},
                   });
@@ -182,6 +185,7 @@ export function System() {
                     leftFunc: () => {
                       backupSaves();
                       dispatch(resetAllData());
+                      WebGAL.readHistoryManager.clearReadHistory();
                       dumpToStorageFast();
                       dispatch(saveActions.resetSaves());
                       dumpSavesToStorage(0, 200);

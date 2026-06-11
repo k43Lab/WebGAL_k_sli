@@ -103,6 +103,22 @@ export function Display() {
           }}
         />
       </NormalOption>
+      <NormalOption key="highlightReadText" title={t('highlightReadText.title')}>
+        <NormalButton
+          textList={t('highlightReadText.options.on', 'highlightReadText.options.off')}
+          functionList={[
+            () => {
+              dispatch(setOptionData({ key: 'highlightReadText', value: true }));
+              setStorage();
+            },
+            () => {
+              dispatch(setOptionData({ key: 'highlightReadText', value: false }));
+              setStorage();
+            },
+          ]}
+          currentChecked={userDataState.optionData.highlightReadText ? 0 : 1}
+        />
+      </NormalOption>
       <NormalOption full key="textPreview" title={t('textPreview.title')}>
         {/* 这是一个临时的组件，用于模拟文本预览的效果 */}
         <TextPreview />

@@ -30,11 +30,12 @@ export default function IMSSTextbox(props: ITextboxProps) {
   } = props;
 
   const applyStyle = useApplyStyle('textbox');
-  const readTextClassName = isRead ? ` ${applyStyle('readText', styles.readText)}` : '';
-  const readTextOuterClassName = isRead
+  const highlightReadText = useSelector((state: RootState) => state.userData.optionData.highlightReadText);
+  const readTextClassName = isRead && highlightReadText ? ` ${applyStyle('readText', styles.readText)}` : '';
+  const readTextOuterClassName = isRead && highlightReadText
     ? ` ${applyStyle('readTextOuter', styles.readTextOuter)}`
     : '';
-  const readTextInnerClassName = isRead ? ` ${applyStyle('readTextInner', styles.readTextInner)}` : '';
+  const readTextInnerClassName = isRead && highlightReadText ? ` ${applyStyle('readTextInner', styles.readTextInner)}` : '';
 
   useEffect(() => {
     function settleText() {

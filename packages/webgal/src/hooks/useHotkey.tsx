@@ -9,11 +9,32 @@ import { componentsVisibility, MenuPanelTag } from '@/store/guiInterface';
 import { setVisibility } from '@/store/GUIReducer';
 import { RootState } from '@/store/store';
 import { setOptionData } from '@/store/userDataReducer';
+import { IKeyBindings } from '@/store/userDataInterface';
 import styles from '@/UI/Backlog/backlog.module.scss';
 import throttle from 'lodash/throttle';
 import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import useFullScreen from './useFullScreen';
+
+/** 默认快捷键配置 */
+const defaultKeyBindings: IKeyBindings = {
+  panic: { primaryKey: 'Escape', altKey: 'Backquote' },
+  back: { primaryKey: 'Escape', altKey: '' },
+  skip: { primaryKey: 'Control', altKey: '' },
+  nextSentence: { primaryKey: 'Space', altKey: 'Enter' },
+  toggleFullScreen: { primaryKey: 'F11', altKey: '' },
+};
+
+/**
+ * 从 store 获取快捷键配置
+ */
+function useKeyBindings(): IKeyBindings {
+  const keyBindings = useGenSyncRef((state: RootState) => state.userData.optionData.keyBindings);
+  return keyBindings.current || defaultKeyBindings;
+}
+
+/** useBack 刚处理过按键的标记，防止同一物理按键的 keyup 触发 usePanic */
+let backJustHandled = false;
 
 // options备用
 export interface HotKeyType {
@@ -44,6 +65,7 @@ export function useHotkey(opt?: HotKeyType) {
   useMouseWheel();
   useSkip();
   usePanic();
+  useBack();
   useFastSaveBeforeUnloadPage();
   useSpaceAndEnter();
   useToggleFullScreen();
@@ -159,10 +181,11 @@ export function useMouseWheel() {
 }
 
 /**
- * Panic Button, use Esc and Backquote
+ * Panic Button, use Esc and Backquote (configurable)
  */
 export function usePanic() {
-  const panicButtonList = ['Escape', 'Backquote'];
+  const keyBindings = useKeyBindings();
+  const panicButtonList = [keyBindings.panic.primaryKey, keyBindings.panic.altKey].filter(Boolean);
   const isPanicButton = (ev: KeyboardEvent) =>
     !ev.isComposing && !ev.defaultPrevented && panicButtonList.includes(ev.code);
   const GUIStore = useGenSyncRef((state: RootState) => state.GUI);
@@ -171,6 +194,13 @@ export function usePanic() {
   const setComponentVisibility = useSetComponentVisibility();
   const handlePressPanicButton = useCallback((ev: KeyboardEvent) => {
     if (!isPanicButton(ev) || isTitleShown()) return;
+    // 如果 useBack 刚刚处理了同一物理按键的 keydown（关闭面板），跳过本次 keyup
+    if (backJustHandled) {
+      backJustHandled = false;
+      return;
+    }
+    const gui = GUIStore.current;
+    if (gui.showGlobalDialog || gui.showExtra || gui.showBacklog || gui.showMenuPanel) return;
     if (isPanicOverlayOpen()) {
       setComponentVisibility('showPanicOverlay', false);
       // todo: resume
@@ -189,24 +219,79 @@ export function usePanic() {
 }
 
 /**
- * ctrl控制快进
+ * 返回：按配置的返回键关闭当前打开的 UI 面板（优先级：全局对话框 > 鉴赏 > 回想 > 菜单）
+ */
+export function useBack() {
+  const keyBindings = useKeyBindings();
+  const backKeys = [keyBindings.back.primaryKey, keyBindings.back.altKey].filter(Boolean);
+  const GUIStore = useGenSyncRef((state: RootState) => state.GUI);
+  const setComponentVisibility = useSetComponentVisibility();
+
+  const handleBackKeydown = useCallback((ev: KeyboardEvent) => {
+    if (!backKeys.includes(ev.code) || ev.isComposing || ev.defaultPrevented) return;
+    // 忽略自动重复的 keydown（长按触发），防止重置 backJustHandled 标记
+    if (ev.repeat) return;
+
+    const gui = GUIStore.current;
+    // 优先级：全局对话框 > 鉴赏模式 > 回想 > 菜单面板
+    if (gui.showGlobalDialog) {
+      setComponentVisibility('showGlobalDialog', false);
+      ev.preventDefault();
+      backJustHandled = true;
+      return;
+    }
+    if (gui.showExtra) {
+      setComponentVisibility('showExtra', false);
+      ev.preventDefault();
+      backJustHandled = true;
+      return;
+    }
+    if (gui.showBacklog) {
+      setComponentVisibility('showBacklog', false);
+      setComponentVisibility('showTextBox', true);
+      ev.preventDefault();
+      backJustHandled = true;
+      return;
+    }
+    if (gui.showMenuPanel) {
+      setComponentVisibility('showMenuPanel', false);
+      ev.preventDefault();
+      backJustHandled = true;
+      return;
+    }
+    // 没有面板需要关闭时，重置标记，允许 usePanic 正常工作
+    backJustHandled = false;
+  }, [backKeys]);
+
+  useMounted(() => {
+    document.addEventListener('keydown', handleBackKeydown, true);
+  });
+  useUnMounted(() => {
+    document.removeEventListener('keydown', handleBackKeydown, true);
+  });
+}
+
+/**
+ * ctrl控制快进 (configurable)
  */
 export function useSkip() {
+  const keyBindings = useKeyBindings();
   // 因为document事件只绑定一次 为了防止之后更新GUIStore时取不到最新值
   // 使用Ref共享GUIStore
   const GUIStore = useGenSyncRef((state: RootState) => state.GUI);
   // 判断是否位于标题 & 存读档，选项 & 回想等页面
   const isGameActive = useGameActive(GUIStore);
-  // 判断按键是否为ctrl
-  const isCtrlKey = useCallback((e) => e.keyCode === 17, []);
+  // 判断按键是否为快进键
+  const skipKeys = [keyBindings.skip.primaryKey, keyBindings.skip.altKey].filter(Boolean);
+  const isSkipKey = useCallback((e: KeyboardEvent) => skipKeys.includes(e.code), [skipKeys]);
   const handleCtrlKeydown = useCallback((e) => {
-    if (isCtrlKey(e) && isGameActive()) {
-      // 按下 ctrl 键快进时，强制全文快进
+    if (isSkipKey(e) && isGameActive()) {
+      // 按下快进键时，强制全文快进
       startFast(true);
     }
   }, []);
   const handleCtrlKeyup = useCallback((e) => {
-    if (isCtrlKey(e) && isGameActive()) {
+    if (isSkipKey(e) && isGameActive()) {
       stopFast();
     }
   }, []);
@@ -326,20 +411,20 @@ function nextTick(callback: () => void) {
 }
 
 /**
- * 空格 & 回车 跳转到下一条
+ * 空格 & 回车 跳转到下一条 (configurable)
  */
 export function useSpaceAndEnter() {
+  const keyBindings = useKeyBindings();
   const GUIStore = useGenSyncRef((state: RootState) => state.GUI);
   const isGameActive = useGameActive(GUIStore);
   const setComponentVisibility = useSetComponentVisibility();
   // 防止一直触发keydown导致快进
   const lockRef = useRef(false);
-  // 判断按键是否为空格 & 回车
-  const isSpaceOrEnter = useCallback((e) => {
-    return e.keyCode === 32 || e.keyCode === 13;
-  }, []);
+  // 判断按键是否为下一句键
+  const nextSentenceKeys = [keyBindings.nextSentence.primaryKey, keyBindings.nextSentence.altKey].filter(Boolean);
+  const isNextSentenceKey = useCallback((e: KeyboardEvent) => nextSentenceKeys.includes(e.code), [nextSentenceKeys]);
   const handleKeydown = useCallback((e) => {
-    if (isSpaceOrEnter(e) && isGameActive() && !lockRef.current) {
+    if (isNextSentenceKey(e) && isGameActive() && !lockRef.current) {
       if (!GUIStore.current.showTextBox) {
         setComponentVisibility('showTextBox', true);
         return;
@@ -350,7 +435,7 @@ export function useSpaceAndEnter() {
     }
   }, []);
   const handleKeyup = useCallback((e) => {
-    if (isSpaceOrEnter(e) && isGameActive()) {
+    if (isNextSentenceKey(e) && isGameActive()) {
       lockRef.current = false;
     }
   }, []);
@@ -381,15 +466,22 @@ function hasScrollToBottom(dom: Element) {
 }
 
 /**
- * F11 进入全屏
+ * F11 进入全屏 (configurable)
  */
 function useToggleFullScreen() {
   const { isSupported, isFullScreen, toggle } = useFullScreen();
   if (!isSupported) return;
   const dispatch = useDispatch();
+  const keyBindings = useKeyBindings();
+  const fullScreenKeys = [keyBindings.toggleFullScreen.primaryKey, keyBindings.toggleFullScreen.altKey].filter(Boolean);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => e.repeat || (e.key === 'F11' && toggle());
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.repeat) return;
+      if (fullScreenKeys.includes(e.code)) {
+        toggle();
+      }
+    };
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);

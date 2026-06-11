@@ -121,4 +121,12 @@ export class ReadHistoryManager {
       this.addReadHistory();
     }
   }
+
+  /**
+   * 清除内存中的已读历史记录
+   */
+  public clearReadHistory() {
+    this.history.clear();
+    this.load = false;
+  }
 }

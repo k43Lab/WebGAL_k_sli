@@ -105,6 +105,13 @@ const zhCn = {
             textboxOpacity: {
               title: '文本框不透明度',
             },
+            highlightReadText: {
+              title: '高亮已阅读文本',
+              options: {
+                on: '开启',
+                off: '关闭',
+              },
+            },
             textPreview: {
               title: '文本显示预览',
               text: '现在预览的是文本框字体大小和播放速度的情况，您可以根据您的观感调整上面的选项。',
@@ -122,6 +129,47 @@ const zhCn = {
             voiceOption: { title: '是否中断语音' },
             voiceStop: { title: '停止语音' },
             voiceContinue: { title: '继续语音' },
+          },
+        },
+        controls: {
+          title: '操控',
+          options: {
+            panic: {
+              title: '紧急覆盖层',
+              primaryKey: '主键',
+              altKey: '备选键',
+            },
+            back: {
+              title: '返回',
+              primaryKey: '主键',
+              altKey: '备选键',
+            },
+            skip: {
+              title: '快进',
+              primaryKey: '主键',
+              altKey: '备选键',
+            },
+            nextSentence: {
+              title: '下一句',
+              primaryKey: '主键',
+              altKey: '备选键',
+            },
+            toggleFullScreen: {
+              title: '全屏切换',
+              primaryKey: '主键',
+              altKey: '备选键',
+            },
+            resetKeys: '恢复默认',
+            keyLabels: {
+              Escape: 'Esc',
+              Backquote: '`',
+              Control: 'Ctrl',
+              Space: '空格',
+              Enter: '回车',
+              F11: 'F11',
+              none: '无',
+            },
+            tips: '点击按键框后按下想要设置的按键，按 Esc 取消',
           },
         },
         // language: {

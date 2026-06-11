@@ -105,6 +105,13 @@ const zhTw = {
             textboxOpacity: {
               title: '文字方塊不透明度',
             },
+            highlightReadText: {
+              title: '高亮已閱讀文字',
+              options: {
+                on: '開啟',
+                off: '關閉',
+              },
+            },
             textPreview: {
               title: '文字顯示預覽',
               text: '現在預覽的是文字方塊字體大小和播放速度的情況，您可以根據您的觀感調整上面的設定。',
@@ -122,6 +129,47 @@ const zhTw = {
             /* voiceOption: { title: '是否中斷語音' },
             voiceStop: { title: '停止語音' },
             voiceContinue: { title: '繼續語音' }, */
+          },
+        },
+        controls: {
+          title: '操控',
+          options: {
+            panic: {
+              title: '緊急覆蓋層',
+              primaryKey: '主鍵',
+              altKey: '備選鍵',
+            },
+            back: {
+              title: '返回',
+              primaryKey: '主鍵',
+              altKey: '備選鍵',
+            },
+            skip: {
+              title: '快進',
+              primaryKey: '主鍵',
+              altKey: '備選鍵',
+            },
+            nextSentence: {
+              title: '下一句',
+              primaryKey: '主鍵',
+              altKey: '備選鍵',
+            },
+            toggleFullScreen: {
+              title: '全螢幕切換',
+              primaryKey: '主鍵',
+              altKey: '備選鍵',
+            },
+            resetKeys: '恢復預設',
+            keyLabels: {
+              Escape: 'Esc',
+              Backquote: '`',
+              Control: 'Ctrl',
+              Space: '空白鍵',
+              Enter: 'Enter',
+              F11: 'F11',
+              none: '無',
+            },
+            tips: '點擊按鍵框後按下想要設定的按鍵，按 Esc 取消',
           },
         },
         // language: {

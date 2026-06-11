@@ -5,6 +5,7 @@ import { useValue } from '@/hooks/useValue';
 import { System } from '@/UI/Menu/Options/System/System';
 import { Display } from '@/UI/Menu/Options/Display/Display';
 import { Sound } from '@/UI/Menu/Options/Sound/Sound';
+import { Controls } from '@/UI/Menu/Options/Controls/Controls';
 import useTrans from '@/hooks/useTrans';
 import useSoundEffect from '@/hooks/useSoundEffect';
 
@@ -12,6 +13,7 @@ enum optionPage {
   'System',
   'Display',
   'Sound',
+  'Controls',
 }
 
 export const Options: FC = () => {
@@ -66,11 +68,22 @@ export const Options: FC = () => {
           >
             {t('pages.sound.title')}
           </div>
+          <div
+            onClick={() => {
+              currentOptionPage.set(optionPage.Controls);
+              playSeSwitch();
+            }}
+            className={getClassName(optionPage.Controls)}
+            onMouseEnter={playSeEnter}
+          >
+            {t('pages.controls.title')}
+          </div>
         </div>
         <div className={styles.Options_main_content}>
           {currentOptionPage.value === optionPage.Display && <Display />}
           {currentOptionPage.value === optionPage.System && <System />}
           {currentOptionPage.value === optionPage.Sound && <Sound />}
+          {currentOptionPage.value === optionPage.Controls && <Controls />}
         </div>
       </div>
     </div>

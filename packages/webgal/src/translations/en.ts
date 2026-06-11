@@ -105,6 +105,13 @@ const en = {
             textboxOpacity: {
               title: 'Textbox Opacity',
             },
+            highlightReadText: {
+              title: 'Highlight Read Text',
+              options: {
+                on: 'ON',
+                off: 'OFF',
+              },
+            },
             textPreview: {
               title: 'Preview Text Showing',
               text: "You are previewing the text's font, size and playback speed, now. You can adjust the above options according to your perception.",
@@ -119,6 +126,47 @@ const en = {
             bgmVolume: { title: 'BGM Volume' },
             seVolume: { title: 'Sound Effects Volume' },
             uiSeVolume: { title: 'UI Sound Effects Volume' },
+          },
+        },
+        controls: {
+          title: 'Controls',
+          options: {
+            panic: {
+              title: 'Panic Overlay',
+              primaryKey: 'Primary',
+              altKey: 'Alternate',
+            },
+            back: {
+              title: 'Back',
+              primaryKey: 'Primary',
+              altKey: 'Alternate',
+            },
+            skip: {
+              title: 'Fast Skip',
+              primaryKey: 'Primary',
+              altKey: 'Alternate',
+            },
+            nextSentence: {
+              title: 'Next Sentence',
+              primaryKey: 'Primary',
+              altKey: 'Alternate',
+            },
+            toggleFullScreen: {
+              title: 'Toggle Fullscreen',
+              primaryKey: 'Primary',
+              altKey: 'Alternate',
+            },
+            resetKeys: 'Reset Default',
+            keyLabels: {
+              Escape: 'Esc',
+              Backquote: '`',
+              Control: 'Ctrl',
+              Space: 'Space',
+              Enter: 'Enter',
+              F11: 'F11',
+              none: 'None',
+            },
+            tips: 'Click the key box and press the desired key, press Esc to cancel',
           },
         },
         // language: {

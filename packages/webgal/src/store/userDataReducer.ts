@@ -6,6 +6,7 @@
 import { language } from '@/config/language';
 import {
   IAppreciationAsset,
+  IKeyBindings,
   IOptionData,
   ISaveData,
   ISetOptionDataPayload,
@@ -19,6 +20,14 @@ import {
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import cloneDeep from 'lodash/cloneDeep';
 import { ISetGameVar } from '@/Core/Modules/stage/stageInterface';
+
+const defaultKeyBindings: IKeyBindings = {
+  panic: { primaryKey: 'Escape', altKey: 'Backquote' },
+  back: { primaryKey: 'Escape', altKey: '' },
+  skip: { primaryKey: 'Control', altKey: '' },
+  nextSentence: { primaryKey: 'Space', altKey: 'Enter' },
+  toggleFullScreen: { primaryKey: 'F11', altKey: '' },
+};
 
 const initialOptionSet: IOptionData = {
   slPage: 1,
@@ -36,6 +45,8 @@ const initialOptionSet: IOptionData = {
   voiceInterruption: voiceOption.no,
   fullScreen: fullScreenOption.off,
   skipAll: false,
+  highlightReadText: true, // 默认高亮已阅读文本
+  keyBindings: { ...defaultKeyBindings },
 };
 
 // 初始化用户数据
@@ -147,6 +158,9 @@ const userDataSlice = createSlice({
     setReadHistory: (state, action: PayloadAction<Record<'key' | 'value', string>>) => {
       state.readHistory[action.payload.key] = action.payload.value;
     },
+    clearReadHistory: (state) => {
+      state.readHistory = {};
+    },
   },
 });
 
@@ -162,6 +176,7 @@ export const {
   resetOptionSet,
   resetAllData,
   setReadHistory,
+  clearReadHistory,
 } = userDataSlice.actions;
 export default userDataSlice.reducer;
 

@@ -159,6 +159,19 @@ function normalizeUserData(userData: Partial<IUserData>): IUserData {
   const optionData: Record<string, any> = isObject(userData.optionData) ? userData.optionData : {};
   const appreciationData: Record<string, any> = isObject(userData.appreciationData) ? userData.appreciationData : {};
 
+  // 深度合并 keyBindings，确保旧存档数据缺少的字段（如 back）能从默认值补齐
+  const savedKeyBindings = isObject(optionData.keyBindings) ? optionData.keyBindings : {};
+  const mergedKeyBindings: Record<string, any> = {};
+  const defaultKB = defaultUserData.optionData.keyBindings as Record<string, any>;
+  for (const actionKey of Object.keys(defaultKB)) {
+    const defaultBinding = defaultKB[actionKey];
+    const savedBinding = isObject(savedKeyBindings[actionKey]) ? savedKeyBindings[actionKey] : {};
+    mergedKeyBindings[actionKey] = {
+      primaryKey: typeof savedBinding.primaryKey === 'string' ? savedBinding.primaryKey : defaultBinding.primaryKey,
+      altKey: typeof savedBinding.altKey === 'string' ? savedBinding.altKey : defaultBinding.altKey,
+    };
+  }
+
   return {
     ...defaultUserData,
     ...userData,
@@ -167,6 +180,7 @@ function normalizeUserData(userData: Partial<IUserData>): IUserData {
     optionData: {
       ...defaultUserData.optionData,
       ...optionData,
+      keyBindings: mergedKeyBindings as any,
     },
     appreciationData: {
       ...defaultUserData.appreciationData,
