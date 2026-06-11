@@ -1,38 +1,39 @@
 {
-  "name": "@webgal/base",
-  "version": "4.6.0",
-  "description": "A brand new web Visual Novel engine.",
-  "repository": "https://github.com/OpenWebGAL/WebGAL.git",
-  "author": "Mahiru <Mahiru_@outlook.com>",
-  "dependencies": {
-    "@tauri-apps/api": "^2.5.0",
-    "@tauri-apps/cli": "^2.5.0",
-    "@tauri-apps/plugin-fs": "^2.2.1",
-    "@tauri-apps/plugin-process": "^2.2.1",
-    "@tauri-apps/plugin-window-state": "^2.2.2",
-    "@types/parse-path": "^7.1.0",
-    "bootstrap-icons": "^1.12.1"
-  },
-  "license": "MPL-2.0",
-  "private": true,
-  "scripts": {
-    "build": "bun run parser:build && bun run webgal:build",
-    "build-ci": "bun run parser:build-ci && bun run webgal:build",
-    "dev": "bun run parser:build && bun run webgal:dev",
-    "tauri:dev": "bun tauri dev",
-    "webgal:dev": "cd packages/webgal && bun run dev",
-    "webgal:build": "cd packages/webgal && bun run build",
-    "parser:test": "cd packages/parser && bun run test",
-    "parser:test-coverage": "cd packages/parser && bun run coverage",
-    "parser:build": "cd packages/parser && bun run build",
-    "parser:build-ci": "cd packages/parser && bun run build-ci"
-  },
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
-  },
-  "engines": {
-    "node": ">=18"
-  }
+    "name": "@webgal/base",
+    "version": "4.6.0",
+    "description": "A brand new web Visual Novel engine.",
+    "repository": "https://github.com/OpenWebGAL/WebGAL.git",
+    "author": "Mahiru <Mahiru_@outlook.com>",
+    "dependencies": {
+        "@tauri-apps/api": "^2.11.0",
+        "@tauri-apps/cli": "^2.11.2",
+        "@tauri-apps/plugin-fs": "^2.5.1",
+        "@tauri-apps/plugin-process": "^2.3.1",
+        "@tauri-apps/plugin-window-state": "^2.4.1",
+        "@types/parse-path": "^7.1.0",
+        "bootstrap-icons": "^1.12.1"
+    },
+    "license": "MPL-2.0",
+    "private": true,
+    "scripts": {
+        "build": "bun run parser:build && bun run webgal:build",
+        "build-ci": "bun run parser:build-ci && bun run webgal:build",
+        "dev": "bun run parser:build && bun run webgal:dev",
+        "tauri:dev": "bun tauri dev",
+        "webgal:dev": "cd packages/webgal && bun run dev",
+        "webgal:build": "cd packages/webgal && bun run build",
+        "parser:test": "cd packages/parser && bun run test",
+        "parser:test-coverage": "cd packages/parser && bun run coverage",
+        "parser:build": "cd packages/parser && bun run build",
+        "parser:build-ci": "cd packages/parser && bun run build-ci",
+        "tauri": "tauri"
+    },
+    "workspaces": {
+        "packages": [
+            "packages/*"
+        ]
+    },
+    "engines": {
+        "node": ">=18"
+    }
 }
