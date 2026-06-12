@@ -3,19 +3,19 @@ import { TemplateFontDescriptor } from '@/types/template';
 
 export const DEFAULT_FONT_OPTIONS: FontOption[] = [
   {
-    family: `'资源圆体', serif`,
+    family: `'WebgalUITitle', serif`,
     source: 'default',
-    labelKey: 'textFont.options.resourceHanRounded',
-  },
-  {
-    family: `'思源宋体', serif`,
-    source: 'default',
-    labelKey: 'textFont.options.siYuanSimSun',
+    labelKey: 'textFont.options.WebgalUITitle',
   },
   {
     family: `'WebgalUI', serif`,
     source: 'default',
-    labelKey: 'textFont.options.SimHei',
+    labelKey: 'textFont.options.WebgalUI',
+  },
+  {
+    family: `'WebgalStageDisplay', serif`,
+    source: 'default',
+    labelKey: 'textFont.options.WebgalStageDisplay',
   },
 ];
 

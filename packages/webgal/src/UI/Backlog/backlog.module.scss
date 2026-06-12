@@ -67,6 +67,7 @@
 }
 
 .backlog_title {
+  font-family: 'WebgalUITitle', serif;
   height: 100%;
   line-height: 100%;
   font-size: 360%;
@@ -77,7 +78,7 @@
 }
 
 .backlog_content {
-  font-family: "资源圆体", serif;
+  font-family: 'WebgalStageDisplay', serif;
   position: absolute;
   height: 80%;
   padding: 1em 10em 1em 10em;

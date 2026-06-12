@@ -2,27 +2,22 @@
 
 @use 'Core/util/constants' as *;
 
-/*@font-face {
-  font-family: "思源宋体";
-  //noinspection CssUnknownTarget
-  src: url("assets/fonts/SourceHanSerifCN-Regular.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: '资源圆体';
-  src: url('assets/fonts/ResourceHanRoundedCN-Regular.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: "LXGW";
-  //noinspection CssUnknownTarget
-  src: url("assets/fonts/LXGWWenKai-Regular.ttf") format("truetype");
-}
-
 @font-face {
   font-family: 'WebgalUI';
-  /*noinspection CssUnknownTarget
-  src: url('assets/fonts/HanaMinA.woff2') format('woff2');
+  src: url('assets/fonts/Raleway-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'WebgalUITitle';
+  src: url('assets/fonts/SourceHanSerifCN-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'WebgalStageDisplay';
+  src: url('assets/fonts/SourceHanSerifCN-Regular.ttf') format('truetype');
+  font-display: swap;
 }
 
 /*#trans-overlay {

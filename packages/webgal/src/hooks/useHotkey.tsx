@@ -21,7 +21,7 @@ import useFullScreen from './useFullScreen';
 const defaultKeyBindings: IKeyBindings = {
   panic: { primaryKey: 'Escape', altKey: 'Backquote', thirdKey: '' },
   back: { primaryKey: 'Escape', altKey: '', thirdKey: '' },
-  skip: { primaryKey: 'Control', altKey: '', thirdKey: '' },
+  skip: { primaryKey: 'ControlLeft', altKey: '', thirdKey: '' },
   nextSentence: { primaryKey: 'Space', altKey: 'Enter', thirdKey: 'Mouse1' },
   toggleFullScreen: { primaryKey: 'F11', altKey: '', thirdKey: '' },
   openBacklog: { primaryKey: 'WheelUp', altKey: '', thirdKey: '' },

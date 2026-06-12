@@ -97,9 +97,9 @@ const zhCn = {
             /* textFont: {
               title: '文本字体',
               options: {
-                resourceHanRounded: '资源圆体',
-                siYuanSimSun: '思源宋体',
-                SimHei: '黑体',
+                WebgalUI: 'UI 黑体',
+                WebgalUITitle: 'UI 宋体',
+                WebgalStageDisplay: '演出宋体',
               },
             }, */
             textboxOpacity: {

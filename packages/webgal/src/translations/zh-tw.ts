@@ -97,9 +97,9 @@ const zhTw = {
             /* textFont: {
               title: '文字字體',
               options: {
-                resourceHanRounded: '資源圓體',
-                siYuanSimSun: '思源宋體',
-                SimHei: '黑體',
+                WebgalUI: 'UI 黑體',
+                WebgalUITitle: 'UI 宋體',
+                WebgalStageDisplay: '演出宋體',
               },
             }, */
             textboxOpacity: {
