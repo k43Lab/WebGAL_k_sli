@@ -175,7 +175,7 @@ const en = {
               F11: 'F11',
               none: 'None',
             },
-            tips: 'Click the key box and press the desired key, click outside to cancel',
+            tips: 'Click a key slot and press a new key to change\nTouch: long-press to reset; Mouse: hover then click the reset button',
           },
         },
         // language: {
