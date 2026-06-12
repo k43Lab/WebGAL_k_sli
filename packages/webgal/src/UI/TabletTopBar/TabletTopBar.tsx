@@ -35,7 +35,7 @@ export const TabletTopBar = () => {
     <div
       className={styles.topBar}
       style={{
-        transform: GUIStore.controlsVisibility ? 'translateY(0)' : 'translateY(-110%)',
+        transform: GUIStore.controlsVisibility && GUIStore.showTextBox ? 'translateY(0)' : 'translateY(-110%)',
       }}
     >
       <div className={`${styles.topBarInnerWrap} ${collapsed.value ? styles.topBarInnerWrapCollapsed : ''}`}>
