@@ -17,29 +17,19 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v4
-
-      - name: install dependencies (ubuntu only)
-        if: matrix.platform == 'ubuntu-24.04'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
-      - name: Vite Build
-        run: |
-          bun i
-          bun run build
-
-      - name: install Rust stable
+      - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
 
-      - name: Rust cache
-        uses: swatinem/rust-cache@v2
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -49,7 +39,7 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-        
+
       - name: Setup Android NDK
         uses: nttld/setup-ndk@v1
         id: setup-ndk
@@ -57,13 +47,13 @@ jobs:
           ndk-version: r26d
           link-to-sdk: true
 
-      - name: init android
+      - name: Init Tauri for Android
         env:
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         run: |
           bun tauri android init
 
-      - name: setup Android signing
+      - name: Setup Android Signing
         run: |
           cd src-tauri/gen/android
           echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" > keystore.properties
@@ -71,7 +61,8 @@ jobs:
           base64 -d <<< "${{ secrets.ANDROID_KEY_BASE64 }}" > $RUNNER_TEMP/keystore.jks
           echo "storeFile=$RUNNER_TEMP/keystore.jks" >> keystore.properties
 
-      - uses: shiftz300/tauri-action@mobile
+      - name: Tauri Build and Release
+        uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
@@ -80,6 +71,6 @@ jobs:
           releaseName: "v__VERSION__"
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
-          prerelease: false
-          mobile: true
+          prerelease: true
+          uploadWorkflowArtifacts: true
           args: ${{ matrix.args }}
