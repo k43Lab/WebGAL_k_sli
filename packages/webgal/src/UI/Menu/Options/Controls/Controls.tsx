@@ -156,7 +156,7 @@ const KeySlot: FC<KeySlotProps> = ({ value, onChange, isModified, onReset }) => 
     <div className={keyStyles.keySlotGroup}>
       <div
         ref={ref}
-        className={`${keyStyles.keySlot} ${listening ? keyStyles.keySlotActive : ''} ${isModified ? keyStyles.keySlotModified : ''}`}
+        className={`${keyStyles.keySlot} ${!value ? keyStyles.keySlotEmpty : ''} ${listening ? keyStyles.keySlotActive : ''} ${isModified ? keyStyles.keySlotModified : ''}`}
         onClick={() => setListening((v) => !v)}
       >
         {listening ? (
