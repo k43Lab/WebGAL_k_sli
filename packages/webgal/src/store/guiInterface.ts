@@ -30,7 +30,6 @@ export interface IGuiState {
   isShowLogo: boolean;
   enableAppreciationMode: boolean; // Pc102
   fontOptimization: boolean; // 字体优化
-  enableTabletMode: boolean; // 平板模式
 }
 
 export type componentsVisibility = Pick<

@@ -72,6 +72,7 @@ export interface IOptionData {
   fullScreen: fullScreenOption;
   skipAll: boolean; // 快进已读/快进全文
   highlightReadText: boolean; // 是否高亮已阅读文本
+  enableTabletMode: boolean; // 平板模式
   keyBindings: IKeyBindings; // 快捷键绑定配置
 }
 

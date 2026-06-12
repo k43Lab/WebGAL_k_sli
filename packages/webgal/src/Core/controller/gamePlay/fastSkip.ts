@@ -12,12 +12,20 @@ import { stageStateManager } from '@/Core/Modules/stage/stageStateManager';
  * 设置 fast 按钮的激活与否
  * @param on
  */
+import tabletStyles from '@/UI/TabletTopBar/tabletTopBar.module.scss';
+
 export const setFastButton = (on: boolean) => {
   const autoIcon = document.getElementById('Button_ControlPanel_fast');
   if (autoIcon) {
     if (on) {
-      autoIcon.className = styles.button_on;
+      autoIcon.className = `${styles.singleButton} ${styles.button_on}`;
     } else autoIcon.className = styles.singleButton;
+  }
+  const tabletFastIcon = document.getElementById('TabletTopBar_fast');
+  if (tabletFastIcon) {
+    if (on) {
+      tabletFastIcon.className = `${tabletStyles.topBarButton} ${tabletStyles.topBarButtonActive}`;
+    } else tabletFastIcon.className = tabletStyles.topBarButton;
   }
 };
 

@@ -9,12 +9,20 @@ import { WebGAL } from '@/Core/WebGAL';
  * 设置 autoplay 按钮的激活与否
  * @param on
  */
+import tabletStyles from '@/UI/TabletTopBar/tabletTopBar.module.scss';
+
 export const setAutoButton = (on: boolean) => {
   const autoIcon = document.getElementById('Button_ControlPanel_auto');
   if (autoIcon) {
     if (on) {
-      autoIcon.className = styles.button_on;
+      autoIcon.className = `${styles.singleButton} ${styles.button_on}`;
     } else autoIcon.className = styles.singleButton;
+  }
+  const tabletAutoIcon = document.getElementById('TabletTopBar_auto');
+  if (tabletAutoIcon) {
+    if (on) {
+      tabletAutoIcon.className = `${tabletStyles.topBarButton} ${tabletStyles.topBarButtonActive}`;
+    } else tabletAutoIcon.className = tabletStyles.topBarButton;
   }
 };
 

@@ -49,6 +49,7 @@ const initialOptionSet: IOptionData = {
   fullScreen: fullScreenOption.off,
   skipAll: false,
   highlightReadText: true, // 默认高亮已阅读文本
+  enableTabletMode: false, // 默认关闭平板模式
   keyBindings: { ...defaultKeyBindings },
 };
 

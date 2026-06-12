@@ -17,6 +17,7 @@ export const TabletTopBar = () => {
   const t = useTrans('gaming.');
   const { playSeEnter, playSeClick, playSeDialogOpen } = useSoundEffect();
   const GUIStore = useSelector((state: RootState) => state.GUI);
+  const userDataState = useSelector((state: RootState) => state.userData);
   const dispatch = useDispatch();
   const collapsed = useValue(false);
 
@@ -27,7 +28,7 @@ export const TabletTopBar = () => {
     dispatch(setMenuPanelTag(menuPanel));
   };
 
-  if (!GUIStore.enableTabletMode || !GUIStore.isEnterGame || GUIStore.showTitle) {
+  if (!userDataState.optionData.enableTabletMode || !GUIStore.isEnterGame || GUIStore.showTitle) {
     return null;
   }
 
