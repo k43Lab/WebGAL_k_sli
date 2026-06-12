@@ -4,6 +4,7 @@ import Translation from '@/UI/Translation/Translation';
 import { Stage } from '@/Stage/Stage';
 import { BottomControlPanel } from '@/UI/BottomControlPanel/BottomControlPanel';
 import { BottomControlPanelFilm } from '@/UI/BottomControlPanel/BottomControlPanelFilm';
+import { TabletTopBar } from '@/UI/TabletTopBar/TabletTopBar';
 import { Backlog } from '@/UI/Backlog/Backlog';
 import Title from '@/UI/Title/Title';
 import Logo from '@/UI/Logo/Logo';
@@ -26,6 +27,7 @@ export default function App() {
       <Stage />
       <BottomControlPanel />
       <BottomControlPanelFilm />
+      <TabletTopBar />
       <Backlog />
       <Title />
       <Logo />

@@ -112,6 +112,13 @@ const zhCn = {
                 off: '关闭',
               },
             },
+            tabletMode: {
+              title: '平板模式',
+              options: {
+                on: '开启',
+                off: '关闭',
+              },
+            },
             textPreview: {
               title: '文本显示预览',
               text: '现在预览的是文本框字体大小和播放速度的情况，您可以根据您的观感调整上面的选项。',

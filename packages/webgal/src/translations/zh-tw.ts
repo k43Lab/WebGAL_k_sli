@@ -112,6 +112,13 @@ const zhTw = {
                 off: '關閉',
               },
             },
+            tabletMode: {
+              title: '平板模式',
+              options: {
+                on: '開啟',
+                off: '關閉',
+              },
+            },
             textPreview: {
               title: '文字顯示預覽',
               text: '現在預覽的是文字方塊字體大小和播放速度的情況，您可以根據您的觀感調整上面的設定。',

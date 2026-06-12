@@ -6,6 +6,7 @@ import { NormalButton } from '@/UI/Menu/Options/NormalButton';
 import { setOptionData } from '@/store/userDataReducer';
 import { fullScreenOption, textSize } from '@/store/userDataInterface';
 import { setStorage } from '@/Core/controller/storage/storageController';
+import { setVisibility } from '@/store/GUIReducer';
 import { TextPreview } from '@/UI/Menu/Options/TextPreview/TextPreview';
 import useTrans from '@/hooks/useTrans';
 // import { textSize } from '@/store/userDataInterface';
@@ -16,6 +17,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 
 export function Display() {
   const userDataState = useSelector((state: RootState) => state.userData);
+  const GUIStore = useSelector((state: RootState) => state.GUI);
   const dispatch = useDispatch();
   const t = useTrans('menu.options.pages.display.options.');
   /* const { isSupported: isFullscreenSupported, enter: enterFullscreen, exit: exitFullscreen } = useFullScreen();
@@ -117,6 +119,22 @@ export function Display() {
             },
           ]}
           currentChecked={userDataState.optionData.highlightReadText ? 0 : 1}
+        />
+      </NormalOption>
+      <NormalOption key="tabletMode" title={t('tabletMode.title')}>
+        <NormalButton
+          textList={t('tabletMode.options.on', 'tabletMode.options.off')}
+          functionList={[
+            () => {
+              dispatch(setVisibility({ component: 'enableTabletMode', visibility: true }));
+              setStorage();
+            },
+            () => {
+              dispatch(setVisibility({ component: 'enableTabletMode', visibility: false }));
+              setStorage();
+            },
+          ]}
+          currentChecked={GUIStore.enableTabletMode ? 0 : 1}
         />
       </NormalOption>
       <NormalOption full key="textPreview" title={t('textPreview.title')}>

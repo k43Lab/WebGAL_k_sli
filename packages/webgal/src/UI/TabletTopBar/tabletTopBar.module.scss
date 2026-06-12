@@ -1,0 +1,142 @@
+.topBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 36px 18px 36px;
+  box-sizing: border-box;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.topBarInner {
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  padding: 20px;
+  pointer-events: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+
+
+.topBarButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 10rem;
+  padding: 15px 20px;
+//   border-radius: 16px;
+  cursor: pointer;
+  color: #ffffffcc;
+  font-size: 240%;
+  transition: background-color 0.2s, color 0.2s, transform 0.15s;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+
+  &:active {
+    background-color: rgba(255, 255, 255, 0.18);
+    transform: scale(0.95);
+  }
+}
+
+.topBarButton i {
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6));
+  line-height: 1;
+}
+
+.topBarButtonText {
+  font-size: 42%;
+  color: #ffffffaa;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  margin-top: 4px;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  font-family: 'WebgalUITitle', serif;
+}
+
+.topBarDivider {
+  width: 2px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 0 10px;
+  flex-shrink: 0;
+}
+
+.topBarInnerWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.topBarInnerWrapCollapsed {
+  /* 整体上滑，面板向上滑出，按钮紧贴面板底部跟随上滑至顶部边缘（按钮 60px + 底边框 1px） */
+  transform: translateY(calc(-100% + 39px));
+}
+
+.collapseToggle {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 140px;
+  height: 60px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: none;
+  cursor: pointer;
+  color: #ffffffaa;
+  font-size: 160%;
+  transition: background-color 0.2s, color 0.2s, transform 0.15s;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.collapseToggle i {
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6));
+}
+
+.collapseToggleCollapsed i {
+  transform: rotate(180deg);
+}
