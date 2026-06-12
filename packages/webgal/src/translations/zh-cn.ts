@@ -159,6 +159,15 @@ const zhCn = {
               primaryKey: '主键',
               altKey: '备选键',
             },
+            openBacklog: {
+              title: '打开对话记录',
+            },
+            closeBacklog: {
+              title: '关闭对话记录',
+            },
+            fastForward: {
+              title: '快进下一句',
+            },
             resetKeys: '恢复默认',
             keyLabels: {
               Escape: 'Esc',
@@ -169,12 +178,12 @@ const zhCn = {
               F11: 'F11',
               none: '无',
             },
-            tips: '点击按键框后按下想要设置的按键，按 Esc 取消',
+            tips: '点击按键框后按下想要设置的按键，点击空白处取消',
           },
         },
         // language: {
         //   title: '语言',
-        //   options: {.
+        //   options: {
         //   },
         // },
       },

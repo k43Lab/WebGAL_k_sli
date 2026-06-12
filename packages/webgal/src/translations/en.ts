@@ -156,6 +156,15 @@ const en = {
               primaryKey: 'Primary',
               altKey: 'Alternate',
             },
+            openBacklog: {
+              title: 'Open Backlog',
+            },
+            closeBacklog: {
+              title: 'Close Backlog',
+            },
+            fastForward: {
+              title: 'Fast Forward',
+            },
             resetKeys: 'Reset Default',
             keyLabels: {
               Escape: 'Esc',
@@ -166,7 +175,7 @@ const en = {
               F11: 'F11',
               none: 'None',
             },
-            tips: 'Click the key box and press the desired key, press Esc to cancel',
+            tips: 'Click the key box and press the desired key, click outside to cancel',
           },
         },
         // language: {

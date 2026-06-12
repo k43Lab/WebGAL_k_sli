@@ -22,11 +22,14 @@ import cloneDeep from 'lodash/cloneDeep';
 import { ISetGameVar } from '@/Core/Modules/stage/stageInterface';
 
 const defaultKeyBindings: IKeyBindings = {
-  panic: { primaryKey: 'Escape', altKey: 'Backquote' },
-  back: { primaryKey: 'Escape', altKey: '' },
-  skip: { primaryKey: 'Control', altKey: '' },
-  nextSentence: { primaryKey: 'Space', altKey: 'Enter' },
-  toggleFullScreen: { primaryKey: 'F11', altKey: '' },
+  panic: { primaryKey: 'Escape', altKey: 'Backquote', thirdKey: '' },
+  back: { primaryKey: 'Escape', altKey: '', thirdKey: '' },
+  skip: { primaryKey: 'Control', altKey: '', thirdKey: '' },
+  nextSentence: { primaryKey: 'Space', altKey: 'Enter', thirdKey: 'Mouse1' },
+  toggleFullScreen: { primaryKey: 'F11', altKey: '', thirdKey: '' },
+  openBacklog: { primaryKey: 'WheelUp', altKey: '', thirdKey: '' },
+  closeBacklog: { primaryKey: 'WheelDown', altKey: '', thirdKey: '' },
+  fastForward: { primaryKey: 'WheelDown', altKey: '', thirdKey: '' },
 };
 
 const initialOptionSet: IOptionData = {

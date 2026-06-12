@@ -169,6 +169,7 @@ function normalizeUserData(userData: Partial<IUserData>): IUserData {
     mergedKeyBindings[actionKey] = {
       primaryKey: typeof savedBinding.primaryKey === 'string' ? savedBinding.primaryKey : defaultBinding.primaryKey,
       altKey: typeof savedBinding.altKey === 'string' ? savedBinding.altKey : defaultBinding.altKey,
+      thirdKey: typeof savedBinding.thirdKey === 'string' ? savedBinding.thirdKey : defaultBinding.thirdKey,
     };
   }
 

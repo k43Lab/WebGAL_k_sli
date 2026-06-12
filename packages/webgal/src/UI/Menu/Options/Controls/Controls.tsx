@@ -10,13 +10,19 @@ import useTrans from '@/hooks/useTrans';
 import { IKeyBinding, IKeyBindings } from '@/store/userDataInterface';
 import useSoundEffect from '@/hooks/useSoundEffect';
 
+/** 当前正在等待录入按键的 KeySlot 实例集合，供 useBack 等热键钩子判断是否应跳过处理 */
+export const listeningKeySlots = new Set<object>();
+
 /** 默认快捷键配置 */
 const defaultKeyBindings: IKeyBindings = {
-  panic: { primaryKey: 'Escape', altKey: 'Backquote' },
-  back: { primaryKey: 'Escape', altKey: '' },
-  skip: { primaryKey: 'Control', altKey: '' },
-  nextSentence: { primaryKey: 'Space', altKey: 'Enter' },
-  toggleFullScreen: { primaryKey: 'F11', altKey: '' },
+  panic: { primaryKey: 'Escape', altKey: 'Backquote', thirdKey: '' },
+  back: { primaryKey: 'Escape', altKey: '', thirdKey: '' },
+  skip: { primaryKey: 'Control', altKey: '', thirdKey: '' },
+  nextSentence: { primaryKey: 'Space', altKey: 'Enter', thirdKey: 'Mouse1' },
+  toggleFullScreen: { primaryKey: 'F11', altKey: '', thirdKey: '' },
+  openBacklog: { primaryKey: 'WheelUp', altKey: '', thirdKey: '' },
+  closeBacklog: { primaryKey: 'WheelDown', altKey: '', thirdKey: '' },
+  fastForward: { primaryKey: 'WheelDown', altKey: '', thirdKey: '' },
 };
 
 /** 按键名称显示映射 */
@@ -49,6 +55,10 @@ const keyCodeToDisplay: Record<string, string> = {
   PageUp: 'PgUp',
   PageDown: 'PgDn',
   NumpadEnter: 'Num Enter',
+  Mouse1: 'Mouse1',
+  Mouse2: 'Mouse2',
+  WheelUp: 'Wheel↑',
+  WheelDown: 'Wheel↓',
 };
 
 function getDisplayKey(keyCode: string, t: (key: string) => string): string {
@@ -72,17 +82,47 @@ const KeySlot: FC<KeySlotProps> = ({ value, onChange, isModified, onReset }) => 
   const [listening, setListening] = useState(false);
   const t = useTrans('menu.options.pages.controls.options.');
   const ref = useRef<HTMLDivElement>(null);
+  const slotId = useRef<object>({});
+
+  // 注册/注销当前 KeySlot 的监听状态
+  useEffect(() => {
+    if (listening) {
+      listeningKeySlots.add(slotId.current);
+    } else {
+      listeningKeySlots.delete(slotId.current);
+    }
+    return () => { listeningKeySlots.delete(slotId.current); };
+  }, [listening]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (!listening) return;
       e.preventDefault();
       e.stopPropagation();
-      if (e.code === 'Escape') {
-        setListening(false);
-        return;
-      }
       onChange(e.code);
+      setListening(false);
+    },
+    [listening, onChange],
+  );
+
+  const handleMouseDown = useCallback(
+    (e: MouseEvent) => {
+      if (!listening) return;
+      e.preventDefault();
+      e.stopPropagation();
+      onChange(`Mouse${e.button + 1}`);
+      setListening(false);
+    },
+    [listening, onChange],
+  );
+
+  const handleWheel = useCallback(
+    (e: WheelEvent) => {
+      if (!listening) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const direction = e.deltaY < 0 ? 'WheelUp' : 'WheelDown';
+      onChange(direction);
       setListening(false);
     },
     [listening, onChange],
@@ -91,11 +131,15 @@ const KeySlot: FC<KeySlotProps> = ({ value, onChange, isModified, onReset }) => 
   useEffect(() => {
     if (listening) {
       document.addEventListener('keydown', handleKeyDown, true);
+      document.addEventListener('mousedown', handleMouseDown, true);
+      document.addEventListener('wheel', handleWheel, { passive: false, capture: true });
     }
     return () => {
       document.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('mousedown', handleMouseDown, true);
+      document.removeEventListener('wheel', handleWheel, true);
     };
-  }, [listening, handleKeyDown]);
+  }, [listening, handleKeyDown, handleMouseDown, handleWheel]);
 
   useEffect(() => {
     if (!listening) return;
@@ -110,6 +154,21 @@ const KeySlot: FC<KeySlotProps> = ({ value, onChange, isModified, onReset }) => 
 
   return (
     <div className={keyStyles.keySlotGroup}>
+      <div
+        ref={ref}
+        className={`${keyStyles.keySlot} ${listening ? keyStyles.keySlotActive : ''} ${isModified ? keyStyles.keySlotModified : ''}`}
+        onClick={() => setListening((v) => !v)}
+      >
+        {listening ? (
+          <>
+            {'> '}
+            <span className={keyStyles.keySlotHighlight}>{getDisplayKey(value, t)}</span>
+            {' <'}
+          </>
+        ) : (
+          getDisplayKey(value, t)
+        )}
+      </div>
       {isModified && (
         <div
           className={keyStyles.keyResetBtn}
@@ -121,13 +180,6 @@ const KeySlot: FC<KeySlotProps> = ({ value, onChange, isModified, onReset }) => 
           <i className="bi bi-arrow-counterclockwise" />
         </div>
       )}
-      <div
-        ref={ref}
-        className={`${keyStyles.keySlot} ${listening ? keyStyles.keySlotActive : ''}`}
-        onClick={() => setListening(true)}
-      >
-        {listening ? '...' : getDisplayKey(value, t)}
-      </div>
     </div>
   );
 };
@@ -140,18 +192,20 @@ export function Controls() {
 
   const keyBindings: IKeyBindings = userDataState.optionData.keyBindings || defaultKeyBindings;
 
-  const updateKeyBinding = (action: keyof IKeyBindings, field: 'primaryKey' | 'altKey', newKey: string) => {
+  const updateKeyBinding = (action: keyof IKeyBindings, field: 'primaryKey' | 'altKey' | 'thirdKey', newKey: string) => {
     const currentBinding = { ...keyBindings[action] };
-    const otherField = field === 'primaryKey' ? 'altKey' : 'primaryKey';
+    const fields: ('primaryKey' | 'altKey' | 'thirdKey')[] = ['primaryKey', 'altKey', 'thirdKey'];
+    const otherFields = fields.filter((f) => f !== field);
     const updatedBindings: IKeyBindings = { ...keyBindings };
 
-    if (newKey && newKey === currentBinding[otherField]) {
-      const tmp = currentBinding[field];
-      currentBinding[field] = newKey;
-      currentBinding[otherField] = tmp;
-    } else {
-      currentBinding[field] = newKey;
+    // 如果新键与其他槽位重复，交换
+    for (const other of otherFields) {
+      if (newKey && newKey === currentBinding[other]) {
+        currentBinding[other] = currentBinding[field];
+        break;
+      }
     }
+    currentBinding[field] = newKey;
 
     updatedBindings[action] = currentBinding;
     dispatch(setOptionData({ key: 'keyBindings', value: updatedBindings }));
@@ -164,7 +218,7 @@ export function Controls() {
     setStorage();
   };
 
-  const resetSingleKey = (action: keyof IKeyBindings, field: 'primaryKey' | 'altKey') => {
+  const resetSingleKey = (action: keyof IKeyBindings, field: 'primaryKey' | 'altKey' | 'thirdKey') => {
     playSeSwitch();
     const updatedBindings: IKeyBindings = { ...keyBindings };
     updatedBindings[action] = { ...keyBindings[action], [field]: defaultKeyBindings[action][field] };
@@ -177,6 +231,9 @@ export function Controls() {
     { key: 'skip', label: t('skip.title') },
     { key: 'nextSentence', label: t('nextSentence.title') },
     { key: 'toggleFullScreen', label: t('toggleFullScreen.title') },
+    { key: 'openBacklog', label: t('openBacklog.title') },
+    { key: 'closeBacklog', label: t('closeBacklog.title') },
+    { key: 'fastForward', label: t('fastForward.title') },
   ];
 
   return (
@@ -207,6 +264,12 @@ export function Controls() {
                 onChange={(newKey) => updateKeyBinding(key, 'altKey', newKey)}
                 isModified={keyBindings[key].altKey !== defaultKeyBindings[key].altKey}
                 onReset={() => resetSingleKey(key, 'altKey')}
+              />
+              <KeySlot
+                value={keyBindings[key].thirdKey}
+                onChange={(newKey) => updateKeyBinding(key, 'thirdKey', newKey)}
+                isModified={keyBindings[key].thirdKey !== defaultKeyBindings[key].thirdKey}
+                onReset={() => resetSingleKey(key, 'thirdKey')}
               />
             </div>
           </div>

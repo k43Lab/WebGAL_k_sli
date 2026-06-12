@@ -159,6 +159,15 @@ const zhTw = {
               primaryKey: '主鍵',
               altKey: '備選鍵',
             },
+            openBacklog: {
+              title: '開啟對話記錄',
+            },
+            closeBacklog: {
+              title: '關閉對話記錄',
+            },
+            fastForward: {
+              title: '快進下一句',
+            },
             resetKeys: '恢復預設',
             keyLabels: {
               Escape: 'Esc',
@@ -169,7 +178,7 @@ const zhTw = {
               F11: 'F11',
               none: '無',
             },
-            tips: '點擊按鍵框後按下想要設定的按鍵，按 Esc 取消',
+            tips: '點擊按鍵框後按下想要設定的按鍵，點擊空白處取消',
           },
         },
         // language: {

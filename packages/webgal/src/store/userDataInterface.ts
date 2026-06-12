@@ -35,6 +35,7 @@ export enum fullScreenOption {
 export interface IKeyBinding {
   primaryKey: string; // 主键
   altKey: string; // 备选键
+  thirdKey: string; // 第三键
 }
 
 /**
@@ -46,6 +47,9 @@ export interface IKeyBindings {
   skip: IKeyBinding; // 快进 (按住快进)
   nextSentence: IKeyBinding; // 下一句 (推进对话)
   toggleFullScreen: IKeyBinding; // 全屏切换
+  openBacklog: IKeyBinding; // 打开对话记录
+  closeBacklog: IKeyBinding; // 关闭对话记录
+  fastForward: IKeyBinding; // 快进下一句
 }
 
 /**

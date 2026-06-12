@@ -159,6 +159,15 @@ const jp = {
               primaryKey: '主キー',
               altKey: '代替キー',
             },
+            openBacklog: {
+              title: 'バックログを開く',
+            },
+            closeBacklog: {
+              title: 'バックログを閉じる',
+            },
+            fastForward: {
+              title: '早送り',
+            },
             resetKeys: 'デフォルトに戻す',
             keyLabels: {
               Escape: 'Esc',
@@ -169,7 +178,7 @@ const jp = {
               F11: 'F11',
               none: 'なし',
             },
-            tips: 'キーボックスをクリックして希望のキーを押してください。Escでキャンセル',
+            tips: 'キーボックスをクリックして希望のキーを押してください。外側をクリックでキャンセル',
           },
         },
         // language: {

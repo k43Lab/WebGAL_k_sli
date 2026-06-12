@@ -10,6 +10,7 @@ import { setVisibility } from '@/store/GUIReducer';
 import { RootState } from '@/store/store';
 import { setOptionData } from '@/store/userDataReducer';
 import { IKeyBindings } from '@/store/userDataInterface';
+import { listeningKeySlots } from '@/UI/Menu/Options/Controls/Controls';
 import styles from '@/UI/Backlog/backlog.module.scss';
 import throttle from 'lodash/throttle';
 import { useCallback, useEffect, useRef } from 'react';
@@ -18,11 +19,14 @@ import useFullScreen from './useFullScreen';
 
 /** 默认快捷键配置 */
 const defaultKeyBindings: IKeyBindings = {
-  panic: { primaryKey: 'Escape', altKey: 'Backquote' },
-  back: { primaryKey: 'Escape', altKey: '' },
-  skip: { primaryKey: 'Control', altKey: '' },
-  nextSentence: { primaryKey: 'Space', altKey: 'Enter' },
-  toggleFullScreen: { primaryKey: 'F11', altKey: '' },
+  panic: { primaryKey: 'Escape', altKey: 'Backquote', thirdKey: '' },
+  back: { primaryKey: 'Escape', altKey: '', thirdKey: '' },
+  skip: { primaryKey: 'Control', altKey: '', thirdKey: '' },
+  nextSentence: { primaryKey: 'Space', altKey: 'Enter', thirdKey: 'Mouse1' },
+  toggleFullScreen: { primaryKey: 'F11', altKey: '', thirdKey: '' },
+  openBacklog: { primaryKey: 'WheelUp', altKey: '', thirdKey: '' },
+  closeBacklog: { primaryKey: 'WheelDown', altKey: '', thirdKey: '' },
+  fastForward: { primaryKey: 'WheelDown', altKey: '', thirdKey: '' },
 };
 
 /**
@@ -73,9 +77,11 @@ export function useHotkey(opt?: HotKeyType) {
 
 /**
  * 右键关闭 & 打开 菜单栏
+ * 当右键被绑定到其他功能时，跳过对应的右键行为
  */
 export function useMouseRightClickHotKey() {
   const GUIStore = useGenSyncRef((state: RootState) => state.GUI);
+  const keyBindingsRef = useGenSyncRef((state: RootState) => state.userData.optionData.keyBindings);
   const setComponentVisibility = useSetComponentVisibility();
   const isGameActive = useGameActive<typeof GUIStore>(GUIStore);
   const isInBackLog = useIsInBackLog<typeof GUIStore>(GUIStore);
@@ -83,6 +89,17 @@ export function useMouseRightClickHotKey() {
   const validMenuPanelTag = useValidMenuPanelTag<typeof GUIStore>(GUIStore);
   const isShowExtra = useIsOpenedExtra<typeof GUIStore>(GUIStore);
   const handleContextMenu = useCallback((ev: MouseEvent) => {
+    const kb = keyBindingsRef.current || defaultKeyBindings;
+    // 检查 Mouse2 是否被绑定到其他功能
+    const allBindings = [kb.openBacklog, kb.closeBacklog, kb.fastForward];
+    const mouse2Bound = allBindings.some(
+      (b) => b.primaryKey === 'Mouse2' || b.altKey === 'Mouse2' || b.thirdKey === 'Mouse2',
+    );
+    if (mouse2Bound) {
+      // 右键已被绑定，不执行默认右键行为
+      ev.preventDefault();
+      return false;
+    }
     if (isOpenedDialog()) {
       setComponentVisibility('showGlobalDialog', false);
       ev.preventDefault();
@@ -117,12 +134,22 @@ let wheelTimeout = setTimeout(() => {
 }, 0);
 
 /**
+ * 检查按键/鼠标是否匹配绑定
+ */
+function matchesBinding(code: string, binding?: { primaryKey?: string; altKey?: string; thirdKey?: string }): boolean {
+  if (!binding) return false;
+  return binding.primaryKey === code || binding.altKey === code || binding.thirdKey === code;
+}
+
+/**
  * 滚轮向上打开历史记录
  * 滚轮向下关闭历史记录
  * 滚轮向下下一句
+ * 支持可配置的鼠标按键和键盘绑定
  */
 export function useMouseWheel() {
   const GUIStore = useGenSyncRef((state: RootState) => state.GUI);
+  const keyBindingsRef = useGenSyncRef((state: RootState) => state.userData.optionData.keyBindings);
   const setComponentVisibility = useSetComponentVisibility();
   const isGameActive = useGameActive(GUIStore);
   const isInBackLog = useIsInBackLog(GUIStore);
@@ -142,29 +169,32 @@ export function useMouseWheel() {
       (ev.wheelDelta && (ev.wheelDelta > 0 ? 'up' : 'down')) ||
       (ev.detail && (ev.detail < 0 ? 'up' : 'down')) ||
       'down';
+    const wheelCode = direction === 'up' ? 'WheelUp' : 'WheelDown';
     const ctrlKey = ev.ctrlKey;
+    const kb = keyBindingsRef.current || defaultKeyBindings;
     const dom = document.querySelector(`.${styles.backlog_content}`);
-    if (isGameActive() && direction === 'up' && !ctrlKey) {
+
+    // 检查滚轮方向是否匹配 openBacklog 绑定
+    if (matchesBinding(wheelCode, kb.openBacklog) && isGameActive() && !ctrlKey) {
       setComponentVisibility('showBacklog', true);
       setComponentVisibility('showTextBox', false);
     } else if (isInBackLog() && direction === 'down' && !ctrlKey) {
       if (dom) {
         let flag = hasScrollToBottom(dom);
         let curTime = new Date().getTime();
-        // 滚动到底部 & 非连续滚动
         if (flag && curTime - prevDownWheelTimeRef.current > 100) {
-          setComponentVisibility('showBacklog', false);
-          setComponentVisibility('showTextBox', true);
+          // 检查是否匹配 closeBacklog 绑定
+          if (matchesBinding(wheelCode, kb.closeBacklog)) {
+            setComponentVisibility('showBacklog', false);
+            setComponentVisibility('showTextBox', true);
+          }
         }
         prevDownWheelTimeRef.current = curTime;
       }
-      // setComponentVisibility('showBacklog', false);
-    } else if (isGameActive() && direction === 'down' && !ctrlKey) {
+    } else if (matchesBinding(wheelCode, kb.fastForward) && isGameActive() && !ctrlKey) {
       clearTimeout(wheelTimeout);
-      // 已开启快进模式
       if (WebGAL.gameplay.isFast) stopFast();
       WebGAL.gameplay.isFast = true;
-      // 滚轮视作快进
       setTimeout(() => {
         WebGAL.gameplay.isFast = false;
       }, 150);
@@ -172,11 +202,54 @@ export function useMouseWheel() {
     }
   }, []);
 
+  // 鼠标按键绑定处理
+  const handleMouseDown = useCallback((ev) => {
+    if (isPanicOverlayOpen()) return;
+    const mouseCode = `Mouse${ev.button + 1}`;
+    const kb = keyBindingsRef.current || defaultKeyBindings;
+    if (!kb) return;
+
+    if (matchesBinding(mouseCode, kb.openBacklog) && isGameActive()) {
+      setComponentVisibility('showBacklog', true);
+      setComponentVisibility('showTextBox', false);
+    } else if (matchesBinding(mouseCode, kb.closeBacklog) && isInBackLog()) {
+      setComponentVisibility('showBacklog', false);
+      setComponentVisibility('showTextBox', true);
+    } else if (matchesBinding(mouseCode, kb.fastForward) && isGameActive()) {
+      next();
+    }
+  }, []);
+
+  // 键盘按键绑定处理
+  const handleKeyDown = useCallback((ev) => {
+    if (isPanicOverlayOpen()) return;
+    if (ev.repeat) return;
+    const activeEl = document.activeElement;
+    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || (activeEl as HTMLElement).isContentEditable)) return;
+    const code = ev.code;
+    const kb = keyBindingsRef.current || defaultKeyBindings;
+    if (!kb) return;
+
+    if (matchesBinding(code, kb.openBacklog) && isGameActive()) {
+      setComponentVisibility('showBacklog', true);
+      setComponentVisibility('showTextBox', false);
+    } else if (matchesBinding(code, kb.closeBacklog) && isInBackLog()) {
+      setComponentVisibility('showBacklog', false);
+      setComponentVisibility('showTextBox', true);
+    } else if (matchesBinding(code, kb.fastForward) && isGameActive()) {
+      next();
+    }
+  }, []);
+
   useMounted(() => {
     document.addEventListener('wheel', handleMouseWheel);
+    document.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('keydown', handleKeyDown);
   });
   useUnMounted(() => {
     document.removeEventListener('wheel', handleMouseWheel);
+    document.removeEventListener('mousedown', handleMouseDown);
+    document.removeEventListener('keydown', handleKeyDown);
   });
 }
 
@@ -186,8 +259,8 @@ export function useMouseWheel() {
 export function usePanic() {
   const keyBindings = useKeyBindings();
   const panicButtonList = [keyBindings.panic.primaryKey, keyBindings.panic.altKey].filter(Boolean);
-  const isPanicButton = (ev: KeyboardEvent) =>
-    !ev.isComposing && !ev.defaultPrevented && panicButtonList.includes(ev.code);
+  const isPanicButton = useCallback((ev: KeyboardEvent) =>
+    !ev.isComposing && !ev.defaultPrevented && panicButtonList.includes(ev.code), [panicButtonList]);
   const GUIStore = useGenSyncRef((state: RootState) => state.GUI);
   const isTitleShown = useCallback(() => GUIStore.current.showTitle, [GUIStore]);
   const isPanicOverlayOpen = useIsPanicOverlayOpen(GUIStore);
@@ -209,13 +282,11 @@ export function usePanic() {
       stopAll(); // despite the name, it only disables fast mode and auto mode
       // todo: pause music & animation for better performance
     }
-  }, []);
-  useMounted(() => {
+  }, [isPanicButton]);
+  useEffect(() => {
     document.addEventListener('keyup', handlePressPanicButton);
-  });
-  useUnMounted(() => {
-    document.removeEventListener('keyup', handlePressPanicButton);
-  });
+    return () => document.removeEventListener('keyup', handlePressPanicButton);
+  }, [handlePressPanicButton]);
 }
 
 /**
@@ -229,6 +300,8 @@ export function useBack() {
 
   const handleBackKeydown = useCallback((ev: KeyboardEvent) => {
     if (!backKeys.includes(ev.code) || ev.isComposing || ev.defaultPrevented) return;
+    // 正在录入按键绑定时，不拦截返回键
+    if (listeningKeySlots.size > 0) return;
     // 忽略自动重复的 keydown（长按触发），防止重置 backJustHandled 标记
     if (ev.repeat) return;
 
@@ -263,12 +336,10 @@ export function useBack() {
     backJustHandled = false;
   }, [backKeys]);
 
-  useMounted(() => {
+  useEffect(() => {
     document.addEventListener('keydown', handleBackKeydown, true);
-  });
-  useUnMounted(() => {
-    document.removeEventListener('keydown', handleBackKeydown, true);
-  });
+    return () => document.removeEventListener('keydown', handleBackKeydown, true);
+  }, [handleBackKeydown]);
 }
 
 /**
@@ -289,28 +360,26 @@ export function useSkip() {
       // 按下快进键时，强制全文快进
       startFast(true);
     }
-  }, []);
+  }, [isSkipKey]);
   const handleCtrlKeyup = useCallback((e) => {
     if (isSkipKey(e) && isGameActive()) {
       stopFast();
     }
-  }, []);
+  }, [isSkipKey]);
   const handleWindowBlur = useCallback((e) => {
     // 停止快进
     stopFast();
   }, []);
-  // mounted时绑定事件
-  useMounted(() => {
+  useEffect(() => {
     document.addEventListener('keydown', handleCtrlKeydown);
     document.addEventListener('keyup', handleCtrlKeyup);
     window.addEventListener('blur', handleWindowBlur);
-  });
-  // unmounted解绑
-  useUnMounted(() => {
-    document.removeEventListener('keydown', handleCtrlKeydown);
-    document.removeEventListener('keyup', handleCtrlKeyup);
-    window.removeEventListener('blur', handleWindowBlur);
-  });
+    return () => {
+      document.removeEventListener('keydown', handleCtrlKeydown);
+      document.removeEventListener('keyup', handleCtrlKeyup);
+      window.removeEventListener('blur', handleWindowBlur);
+    };
+  }, [handleCtrlKeydown, handleCtrlKeyup]);
   // updated时验证状态
   useUpdated(() => {
     if (!isGameActive()) {
@@ -433,27 +502,25 @@ export function useSpaceAndEnter() {
       nextSentence();
       lockRef.current = true;
     }
-  }, []);
+  }, [isNextSentenceKey]);
   const handleKeyup = useCallback((e) => {
     if (isNextSentenceKey(e) && isGameActive()) {
       lockRef.current = false;
     }
-  }, []);
+  }, [isNextSentenceKey]);
   const handleWindowBlur = useCallback((e) => {
     lockRef.current = false;
   }, []);
-  // mounted时绑定事件
-  useMounted(() => {
+  useEffect(() => {
     document.addEventListener('keydown', handleKeydown);
     document.addEventListener('keyup', handleKeyup);
     document.addEventListener('blur', handleWindowBlur);
-  });
-  // unmounted解绑
-  useUnMounted(() => {
-    document.removeEventListener('keydown', handleKeydown);
-    document.removeEventListener('keyup', handleKeyup);
-    document.removeEventListener('blur', handleWindowBlur);
-  });
+    return () => {
+      document.removeEventListener('keydown', handleKeydown);
+      document.removeEventListener('keyup', handleKeyup);
+      document.removeEventListener('blur', handleWindowBlur);
+    };
+  }, [handleKeydown, handleKeyup]);
 }
 
 /**
