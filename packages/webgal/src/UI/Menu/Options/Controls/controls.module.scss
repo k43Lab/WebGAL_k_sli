@@ -144,20 +144,28 @@
   user-select: none;
   text-align: center;
   background-color: #ffffff14;
+  background-image: linear-gradient(to right, #ffffff30, #ffffff30);
+  background-repeat: no-repeat;
+  background-position: right;
+  background-size: 0 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  transition: color 0.2s, background-color 0.2s;
+  transition: background-size 0.2s, color 0.2s;
 
   &:hover {
     color: #ffffffaa;
-    background-color: #ffffff30;
+    background-size: 100% 100%;
+    background-position: left;
   }
 }
 
 .keySlotActive {
   color: #ffffffcc;
-  background-color: #ffffff28;
+  background-color: #ffffff14;
+  background-image: linear-gradient(to right, #ffffff28, #ffffff28);
+  background-size: 100% 100%;
+  background-position: left;
 }
 
 .keySlotHighlight {
